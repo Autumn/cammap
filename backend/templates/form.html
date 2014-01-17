@@ -4,15 +4,15 @@
 
 <head>
     <script>
-    
+
     var initLatitude;
     var initLongitude;
-    
+
     function submitting() {
       getLocation();
       return true;
     }
-    
+
     function getLocation() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(storePosition);
@@ -23,25 +23,25 @@
           storeInForm();
         }
     };
-    
+
     function storePosition(position) {
         initLatitude = position.coords.latitude;
         initLongitude = position.coords.longitude;
         storeInForm();
     };
-    
+
     function storeInForm() {
 	document.getElementById("longi").value = initLongitude;
 	document.getElementById("lati").value = initLatitude;
     }
-    
+
     </script>
 </head>
 
 <body>
 
   <form method="post" action="confirm.html" onsubmit="submitting();">
-    
+
     <table>
       <tr>
 	<td>Photo: </td>
@@ -63,12 +63,12 @@
 	<td style="text-align:center"><input type="submit">
 	</td>
       </tr>
-    
+
     </table>
-    
-    <input type="hidden" id="lati" />
-    <input type="hidden" id="longi" />
-  
+
+    <input type="hidden" name="lati" id="lati" />
+    <input type="hidden" name="longi" id="longi" />
+
   </form>
 
 </body>
