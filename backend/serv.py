@@ -17,17 +17,19 @@ def not_found(error):
 
 @app.route('/test')
 def test():
-    return 'Test success!'
+    return render_template('form.html')
 
 @app.route('/submit', methods=['POST'])
-def submit(posted):
+def subbed():
     error = None
-    image = request.form['upload']
-    radius = request.form['est_rad']
-    location = request.form['loc_string']
-    comment = request.form['comm']
+    image = request.form.get('upload', None)
+    radius = request.form.get('est_rad', None)
+    location = request.form.get('loc_string', None)
+    comment = request.form.get('comm', None)
     # TODO: Important GExiv2 stuff here
     sub = Submission(None, date.today(), 0, 0, 15, location, comment)
+    db_session.add(sub)
+    db_session.commit()
     return 'Submission accepted'
 
 @app.teardown_appcontext

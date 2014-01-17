@@ -13,9 +13,15 @@ class Submission(Base):
     location = Column(String(140))
     comment = Column(String(140))
 
-    def __init__(self, name=None, email=None):
+    def __init__(self, myid, date, lat, long, radius, location, comment):
         # TODO: Uhhhhhhh what
-        self.date = None
+        self.id = myid
+        self.date = date
+        self.lat = lat
+        self.long = long
+        self.radius = radius
+        self.location = location
+        self.comment = comment
 
     def __repr__(self):
         return '<Submission %d %f %f>' % (self.id, self.lat, self.long)
