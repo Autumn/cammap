@@ -12,7 +12,12 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 id_lock = Lock()
-cur_id = Submission.query.order_by(Submission.id.desc()).first().id
+id = Submission.query.order_by(Submission.id.desc()).first()
+print id
+if id == None:
+    cur_id = 1
+else:
+    cur_id = Submission.query.order_by(Submission.id.desc()).first().id
 
 @app.route('/')
 def homepage():
@@ -55,7 +60,7 @@ def nearest():
     lati = request.args.get('lati', '')
     longi = request.args.get('longi', '')
     radius = 100000
-    query = text("select * from test where earth_box(ll_to_earth(:lati, :longi), :radius) @> ll_to_earth(lati, longi)")
+    query = text("select * from submissions where earth_box(ll_to_earth(:lati, :longi), :radius) @> ll_to_earth(lati, longi)")
     res = engine.execute(query, lati=lati, longi=longi, radius=radius)
     print res.fetchall()
 

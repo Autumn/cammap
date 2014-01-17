@@ -1,3 +1,2 @@
-from backend.database import init_db
-
+from backend.database import *
 init_db()
