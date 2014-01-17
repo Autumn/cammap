@@ -2,7 +2,6 @@ from flask import request, Response, render_template
 from backend import app
 from backend.database import db_session, engine
 from sqlalchemy import text
-from backend.models import Submission
 from datetime import date
 from threading import Lock
 
@@ -12,12 +11,15 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 id_lock = Lock()
-id = Submission.query.order_by(Submission.id.desc()).first()
+#id = Submission.query.order_by(Submission.id.desc()).first()
+
+query = text("select id from submissions order by id desc")
+id = engine.execute(query).first()
 print id
 if id == None:
-    cur_id = 1
+    cur_id = 0
 else:
-    cur_id = Submission.query.order_by(Submission.id.desc()).first().id
+    cur_id = res.first() #Submission.query.order_by(Submission.id.desc()).first().id
 
 @app.route('/')
 def homepage():
@@ -50,15 +52,15 @@ def subbed():
     lati = request.form.get('lati', None)
     longi = request.form.get('longi', None)
     # TODO: Important GExiv2 stuff here
-    sub = Submission(myid, datetime.datetime.now(), lati, longi, 15, location, comment)
-    db_session.add(sub)
-    db_session.commit()
+    query = text("insert into submissions values(:id, :date, :lati, :longi, :radius, :location, :comment )")
+    engine.execute(query, id=myid, date=datetime.datetime.now(), lati=lati, longi=longi, radius=radius, location=location, comment=comment)
+    
     return 'Submission accepted'
 
 @app.route('/nearest')
 def nearest():
-    lati = request.args.get('lati', '')
-    longi = request.args.get('longi', '')
+    lati = request.args.get('lati', '0.0')
+    longi = request.args.get('longi', '0.0')
     radius = 100000
     query = text("select * from submissions where earth_box(ll_to_earth(:lati, :longi), :radius) @> ll_to_earth(lati, longi)")
     res = engine.execute(query, lati=lati, longi=longi, radius=radius)
