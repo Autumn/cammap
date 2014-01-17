@@ -1,1 +1,52 @@
-Index page template goes here
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwC3bcM_E8MWkSqbfMmBO-YjL2M-d8tow&sensor=true">
+    </script>
+    <script type="text/javascript">
+      var initLatitude;
+      var initLongitude;
+ 
+      function onLoadPage() {
+        getLocation();
+      };
+ 
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(storePosition);
+        } else {
+          <!-- default position -->
+          initLatitude = -34.397;
+          initLongitude = 150.644;
+          initialize();
+        }
+      };
+
+      function storePosition(position) {
+        initLatitude = position.coords.latitude;
+        initLongitude = position.coords.longitude;
+        initialize();
+      };
+ 
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(initLatitude, initLongitude),
+          zoom: 8
+        };
+        var map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', onLoadPage);
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"/>
+  </body>
+</html>
