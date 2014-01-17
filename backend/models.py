@@ -1,10 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime
+from sqlalchemy import Column, Integer, String, Float, DateTime, desc
 from backend.database import Base
 
 class Submission(Base):
     __tablename__ = 'Submissions'
-    # TODO: We aren't using sqlite for much longer
-    __table_args__ = {'sqlite_autoincrement': True}
     id = Column(Integer, primary_key=True)
     date = Column(DateTime)
     lat = Column(Float)
@@ -25,3 +23,4 @@ class Submission(Base):
 
     def __repr__(self):
         return '<Submission %d %f %f>' % (self.id, self.lat, self.long)
+
