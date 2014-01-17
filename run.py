@@ -6,5 +6,6 @@ import backend.serv
 PORT = 5000
 
 if __name__ == '__main__':
+    app.debug = True
     app.run()
     run_server()
