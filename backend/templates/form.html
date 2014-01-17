@@ -5,12 +5,42 @@
 <head>
     <script>
     
+    var initLatitude;
+    var initLongitude;
+    
+    function submitting() {
+      getLocation();
+      return true;
+    }
+    
+    function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(storePosition);
+        } else {
+          <!-- default position -->
+          initLatitude = -34.397;
+          initLongitude = 150.644;
+          storeInForm();
+        }
+    };
+    
+    function storePosition(position) {
+        initLatitude = position.coords.latitude;
+        initLongitude = position.coords.longitude;
+        storeInForm();
+    };
+    
+    function storeInForm() {
+	document.getElementById("longi").value = initLongitude;
+	document.getElementById("lati").value = initLatitude;
+    }
+    
     </script>
 </head>
 
 <body>
 
-  <form method="post" action="confirm.html">
+  <form method="post" action="confirm.html" onsubmit="submitting();">
     
     <table>
       <tr>
@@ -35,6 +65,9 @@
       </tr>
     
     </table>
+    
+    <input type="hidden" id="lati" />
+    <input type="hidden" id="longi" />
   
   </form>
 
