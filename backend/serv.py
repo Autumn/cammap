@@ -4,11 +4,18 @@ from backend.database import db_session, engine
 from sqlalchemy import text
 from datetime import date
 from threading import Lock
+from werkzeug import secure_filename
+from PIL import Image
 
 import datetime
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+filestore = '/tmp/photos/keep'
+tmpfiledir = '/tmp/photos/'
+
+max_size = (640, 480)
+thumb_size = (128,128)
 
 id_lock = Lock()
 #id = Submission.query.order_by(Submission.id.desc()).first()
@@ -45,7 +52,32 @@ def subbed():
     myid=cur_id
     id_lock.release()
 
-    image = request.form.get('upload', None)
+    image = request.files['upload']
+    image_fn = secure_filename(image.filename)
+    saved_fn = os.path.join(tmpfiledir, "%d.jpg" % myid)
+
+    # Save temporary file
+    image.save(saved_fn)
+    image.close()
+
+    im = Image.open(saved_fn)
+    print im.format
+    if im.format == 'JPEG':
+        # TODO: Catch exception when this fails
+        im.verify()
+        # Need to reopen after verify
+        im = Image.open(saved_fn)
+        im.thumbnail(max_size, Image.ANTIALIAS)
+        im.save(os.path.join(filestore, "%d.jpg" % myid))
+        im.thumbnail(thumb_size, Image.ANTIALIAS)
+        im.save(os.path.join(filestore, "%d_thumb.jpg" % myid))
+    else:
+        return "Not a JPEG buddy", 400
+
+    # Delete temporary file
+    os.remove(saved_fn)
+    # TODO: Important GExiv2 stuff here
+
     radius = request.form.get('est_rad', None)
     location = request.form.get('loc_string', None)
     comment = request.form.get('comm', None)
