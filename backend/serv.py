@@ -1,12 +1,11 @@
 from flask import request, Response, render_template
 from backend import app
-from backend.database import db_session
+from backend.database import db_session 
+from backend.models import Submission
+from datetime import date
 
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
-
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join('basedir', 'app.db')
-SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 @app.route('/')
 def homepage():
@@ -20,9 +19,16 @@ def not_found(error):
 def test():
     return 'Test success!'
 
-@app.route('/submit')
+@app.route('/submit', methods=['POST'])
 def submit(posted):
-    return 'Submission not implemented yet'
+    error = None
+    image = request.form['upload']
+    radius = request.form['est_rad']
+    location = request.form['loc_string']
+    comment = request.form['comm']
+    # TODO: Important GExiv2 stuff here
+    sub = Submission(None, date.today(), 0, 0, 15, location, comment)
+    return 'Submission accepted'
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

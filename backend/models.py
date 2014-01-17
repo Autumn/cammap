@@ -3,10 +3,13 @@ from backend.database import Base
 
 class Submission(Base):
     __tablename__ = 'Submissions'
+    # TODO: We aren't using sqlite for much longer
+    __table_args__ = {'sqlite_autoincrement': True}
     id = Column(Integer, primary_key=True)
     date = Column(DateTime)
     lat = Column(Float)
     long = Column(Float)
+    radius = Column(Integer)
     location = Column(String(140))
     comment = Column(String(140))
 
