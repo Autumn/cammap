@@ -13,6 +13,8 @@
     <script type="text/javascript">
       var initLatitude;
       var initLongitude;
+
+      var map;
  
       function onLoadPage() {
         getLocation();
@@ -46,11 +48,43 @@
           title:"Current Location"
         });
 
-        var map = new google.maps.Map(document.getElementById("map-canvas"),
+        map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
 
         marker.setMap(map);
+      };
+
+      function createInfoWindow(data) {
+        var str = "<div id=thumb><img height=100 width=100 alt=image /></div>" +
+                  "<div id=comment>comment</div>" +
+                  "<div id=upvote>0 <a href=\"upvote\">+</a></div>" +
+                  "<div id=downvote>0 <a href=\"downvote\">-</a></div>";
+        return str;
       }
+
+      function loadCameraData(data) {
+        // data format 
+        // [ { lati : float, longi : float, radius : float,
+        //     comment : string, location : string, upvotes : int,
+        //     downvotes : int } * ]
+
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(data.lati, data.longi),
+          title: data.locStr
+        });
+
+        var infowindow = new google.maps.InfoWindow({
+          content: createInfoWindow(data)
+        });
+   
+        marker.setMap(map);
+
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(map,marker);
+        });
+
+      }; 
+
       google.maps.event.addDomListener(window, 'load', onLoadPage);
     </script>
   </head>
