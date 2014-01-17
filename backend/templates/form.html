@@ -4,14 +4,46 @@
 
 <head>
     <script>
+
+        var initLatitude = 0;
+        var initLongitude = 0;
     
+        var flag = false;
+    
+        function getLocation() {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(storePosition);
+            } else {
+              <!-- default position -->
+              storeInForm();
+            }
+            flag = true;
+        };
+    
+        function storePosition(position) {
+            initLatitude = position.coords.latitude;
+            initLongitude = position.coords.longitude;
+            storeInForm();
+        };
+    
+        function storeInForm() {
+    	document.getElementById("longi").value = initLongitude;
+    	document.getElementById("lati").value = initLatitude;
+        }
+    
+        function checkForLocation() {
+            if (!flag) storeInForm();
+        }
+    
+        window.onload = getLocation();
+
     </script>
 </head>
 
 <body>
 
-  <form method="post" action="/submit">
-    
+  <form method="post" action="/submit" onsubmit="checkForLocation();">
+
     <table>
       <tr>
 	<td>Photo: </td>
@@ -33,9 +65,12 @@
 	<td style="text-align:center"><input type="submit">
 	</td>
       </tr>
-    
+
     </table>
-  
+
+    <input type="hidden" name="lati" id="lati" />
+    <input type="hidden" name="longi" id="longi" />
+
   </form>
 
 </body>

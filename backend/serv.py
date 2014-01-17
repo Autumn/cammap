@@ -4,9 +4,15 @@ from backend.database import db_session, engine
 from sqlalchemy import text
 from backend.models import Submission
 from datetime import date
+from threading import Lock
 
+import datetime
 import os
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+id_lock = Lock()
+cur_id = Submission.query.order_by(Submission.id.desc()).first().id
 
 @app.route('/')
 def homepage():
@@ -18,17 +24,28 @@ def not_found(error):
 
 @app.route('/test')
 def test():
+    print "Current max key is: %d" % cur_id
     return render_template('form.html')
 
 @app.route('/submit', methods=['POST'])
 def subbed():
+    global cur_id
+    global id_lock
     error = None
+
+    id_lock.acquire()
+    cur_id += 1
+    myid=cur_id
+    id_lock.release()
+
     image = request.form.get('upload', None)
     radius = request.form.get('est_rad', None)
     location = request.form.get('loc_string', None)
     comment = request.form.get('comm', None)
+    lati = request.form.get('lati', None)
+    longi = request.form.get('longi', None)
     # TODO: Important GExiv2 stuff here
-    sub = Submission(None, date.today(), 0, 0, 15, location, comment)
+    sub = Submission(myid, datetime.datetime.now(), lati, longi, 15, location, comment)
     db_session.add(sub)
     db_session.commit()
     return 'Submission accepted'
