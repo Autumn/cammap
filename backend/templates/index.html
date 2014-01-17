@@ -25,23 +25,31 @@
           <!-- default position -->
           initLatitude = -34.397;
           initLongitude = 150.644;
-          initialize();
+          initializeMap();
         }
       };
 
       function storePosition(position) {
         initLatitude = position.coords.latitude;
         initLongitude = position.coords.longitude;
-        initialize();
+        initializeMap();
       };
  
-      function initialize() {
+      function initializeMap() {
         var mapOptions = {
           center: new google.maps.LatLng(initLatitude, initLongitude),
           zoom: 8
         };
+
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(initLatitude, initLongitude),
+          title:"Current Location"
+        });
+
         var map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
+
+        marker.setMap(map);
       }
       google.maps.event.addDomListener(window, 'load', onLoadPage);
     </script>
