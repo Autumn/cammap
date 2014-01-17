@@ -1,6 +1,7 @@
 from flask import request, Response, render_template
 from backend import app
-from backend.database import db_session 
+from backend.database import db_session, engine
+from sqlalchemy import text
 from backend.models import Submission
 from datetime import date
 
@@ -31,6 +32,15 @@ def subbed():
     db_session.add(sub)
     db_session.commit()
     return 'Submission accepted'
+
+@app.route('/nearest')
+def nearest():
+    lati = request.args.get('lati', '')
+    longi = request.args.get('longi', '')
+    radius = 100000
+    query = text("select * from test where earth_box(ll_to_earth(:lati, :longi), :radius) @> ll_to_earth(lati, longi)")
+    res = engine.execute(query, lati=lati, longi=longi, radius=radius)
+    print res.fetchall()
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
