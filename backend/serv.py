@@ -39,6 +39,7 @@ def test():
     print "Current max key is: %d" % cur_id
     return render_template('form.html')
 
+
 @app.route('/submit', methods=['POST'])
 def subbed():
     global cur_id
@@ -74,6 +75,7 @@ def subbed():
 
     # Delete temporary file
     os.remove(saved_fn)
+
     # TODO: Important GExiv2 stuff here
 
     radius = request.form.get('est_rad', None)
@@ -85,6 +87,16 @@ def subbed():
     db_session.add(sub)
     db_session.commit()
     return 'Submission accepted'
+
+@app.route('/image')
+def imageget():
+    id = request.args.get('id', '')
+    try:
+        exists = os.path.exists(filestore + "%d.jpg" % id)
+    except IOError:
+        return 'Image does not exist', 404
+    if exists:
+        return send_from_directory(filestore, "%d.jpg" % id)
 
 @app.route('/nearest')
 def nearest():
